@@ -1,0 +1,230 @@
+{
+  "ZoomWorkplace_User": {
+    "Description": "Zoom Workplace user version",
+    "FilePath": "%APPDATA%\\Zoom\\uninstall\\Installer.exe",
+    "Arguments": "/uninstall /silent",
+    "ProcessNames": [
+      "zoom"
+    ],
+    "SuccessCodes": [],
+    "RebootCodes": [],
+    "AppV": false,
+    "AppX": false,
+    "Cleanup": {
+      "Shortcuts": [                 
+        {
+          "Name": "Zoom Workplace",
+          "Lnk": true,
+          "Url": false,
+          "StartMenu": false,
+          "Desktop": false,
+          "Documents": false,
+          "RemoveAll": true
+        }
+      ],
+      "RegistryKeys": [],
+      "FilePaths": [],
+      "EnvironmentVariables": [],
+      "PathEntries": [],
+      "Certificates": [],
+      "ScheduledTasks": [],
+      "Services": [],
+      "WMI": {
+        "Classes": [],
+        "Namespaces": []
+      }
+    }
+  },
+  "Chrome_Standalone": {
+    "Description": "Google Chrome standalone version installed by users with elevated privileges.",
+    "FilePath": "%ProgramFiles%\\Google\\Chrome\\Application\\*\\Installer\\setup.exe",
+    "Arguments": "--force-uninstall --channel=stable --system-level --verbose-logging",
+    "ProcessNames": [
+      "chrome"
+    ],
+    "SuccessCodes": [],
+    "RebootCodes": [],
+    "AppV": false,
+    "AppX": false,
+    "Cleanup": {
+      "Shortcuts": [
+        {
+          "Name": "Google Chrome*",
+          "Lnk": true,
+          "Url": false,
+          "StartMenu": false,
+          "Desktop": false,
+          "Documents": false,
+          "RemoveAll": true
+        }
+      ],
+      "RegistryKeys": [],
+      "FilePaths": [],
+      "EnvironmentVariables": [],
+      "PathEntries": [],
+      "Certificates": [],
+      "ScheduledTasks": [],
+      "Services": [],
+      "WMI": {
+        "Classes": [],
+        "Namespaces": []
+      }
+    }
+  },
+  "Chrome_StandaloneUser": {
+    "Description": "Google Chrome standalone version installed by users without elevated privileges.",
+    "FilePath": "%LOCALAPPDATA%\\Google\\Chrome\\Application\\*\\Installer\\setup.exe",
+    "Arguments": "--force-uninstall --channel=stable --system-level --verbose-logging",
+    "ProcessNames": [
+      "chrome"
+    ],
+    "SuccessCodes": [],
+    "RebootCodes": [],
+    "AppV": false,
+    "AppX": false,
+    "Cleanup": {
+      "Shortcuts": [
+        {
+          "Name": "Google Chrome*",
+          "Lnk": true,
+          "Url": false,
+          "StartMenu": true,
+          "Desktop": true,
+          "Documents": false,
+          "RemoveAll": false
+        }
+      ],
+      "RegistryKeys": [],
+      "FilePaths": [],
+      "EnvironmentVariables": [],
+      "PathEntries": [],
+      "Certificates": [],
+      "ScheduledTasks": [],
+      "Services": [],
+      "WMI": {
+        "Classes": [],
+        "Namespaces": []
+      }
+    }
+  },
+  "Chrome_Enterprise": {
+    "Description": "Google Chrome enterprise MSI version",
+    "FilePath": "%SystemRoot%\\System32\\msiexec.exe",
+    "Arguments": "/X{15971136-C56A-3015-AC9D-ED17B8F94952} /qn /norestart",
+    "ProcessNames": [
+      "chrome"
+    ],
+    "SuccessCodes": [],
+    "RebootCodes": [],
+    "AppV": false,
+    "AppX": false,
+    "Cleanup": {
+      "Shortcuts": [
+        {
+          "Name": "Google Chrome*",
+          "Lnk": true,
+          "Url": false,
+          "StartMenu": false,
+          "Desktop": false,
+          "Documents": false,
+          "RemoveAll": true
+        }
+      ],
+      "RegistryKeys": [],
+      "FilePaths": [],
+      "EnvironmentVariables": [],
+      "PathEntries": [],
+      "Certificates": [],
+      "ScheduledTasks": [],
+      "Services": [],
+      "WMI": {
+        "Classes": [],
+        "Namespaces": []
+      }
+    }
+  },
+  "CMClient": {
+    "Description": "MECM/SCCM client uninstall with HEAVY cleanup. Useful for corrupted installs.",
+    "FilePath": "%SystemRoot%\\CCM\\ccmsetup.exe",
+    "Arguments": "/uninstall",
+    "ProcessNames": [
+      "CcmExec",
+      "ccmsetup",
+      "CmRcService",
+      "smstsmgr"
+    ],
+    "SuccessCodes": [],
+    "RebootCodes": [
+      7
+    ],
+    "AppV": false,
+    "AppX": false,
+    "Cleanup": {
+      "Shortcuts": [
+        {
+          "Name": "",
+          "Lnk": true,
+          "Url": false,
+          "StartMenu": true,
+          "Desktop": true,
+          "Documents": false,
+          "RemoveAll": false
+        }
+      ],
+      "RegistryKeys": [
+        "HKLM\\SOFTWARE\\Microsoft\\SystemCertificates\\SMS\\Certificates",
+        "HKLM\\SOFTWARE\\Microsoft\\CCM",
+        "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\CCM",
+        "HKLM\\SOFTWARE\\Microsoft\\SMS",
+        "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\SMS",
+        "HKLM\\SOFTWARE\\Microsoft\\CCMSetup",
+        "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\CCMSetup",
+        "HKLM\\SYSTEM\\CurrentControlSet\\Services\\CcmExec",
+        "HKLM\\SYSTEM\\CurrentControlSet\\Services\\ccmsetup",
+        "HKLM\\SOFTWARE\\Microsoft\\CCMSetupLastError",
+        "HKLM\\SYSTEM\\CurrentControlSet\\Services\\SmsAgentHost",
+        "HKLM\\SYSTEM\\CurrentControlSet\\Services\\ccmnotificationagent"
+      ],
+      "FilePaths": [
+        "C:\\Windows\\CCM",
+        "C:\\Windows\\CCMSetup",
+        "C:\\Windows\\CCMCache",
+        "C:\\Windows\\CCMLogs",
+        "C:\\Windows\\SMS",
+        "C:\\Windows\\smscfg.ini"
+      ],
+      "EnvironmentVariables": [],
+      "PathEntries": [],
+      "Certificates": [],
+      "ScheduledTasks": [
+        "Configuration Manager Client Retry Task",
+        "Configuration Manager Health Evaluation",
+        "Configuration Manager Idle Detection",
+        "Configuration Manager Client Upgrade",
+        "Configuration Manager Policy Agent Cleanup",
+        "Configuration Manager User Policy Cleanup",
+        "CCMEval",
+        "Configuration Manager Wake-Up Proxy",
+        "Configuration Manager Status Summarizer",
+        "SensorFramework-LogonTask-*"
+      ],
+      "Services": [
+        "CcmExec",
+        "ccmsetup",
+        "CmRcService",
+        "smstsmgr",
+        "ccmnotificationagent",
+        "ccmperfmon"
+      ],
+      "WMI": {
+        "Classes": [],
+        "Namespaces": [
+          "root\\ccm",
+          "root\\CCMVDI",
+          "root\\SmsDm",
+          "root\\cimv2\\sms"
+        ]
+      }
+    }
+  }
+}

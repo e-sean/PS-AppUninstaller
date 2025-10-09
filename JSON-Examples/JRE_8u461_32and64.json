@@ -1,0 +1,76 @@
+{
+  "Apps": [
+    {
+      "_Comment": "MSI uninstall for Java 8 Update 461 64-bit",
+      "Name": "Java 8 Update 461 (64-bit)",
+      "Arguments": "/qn /norestart",
+      "ProcessNames": [],
+      "SuccessCodes": [],
+      "RebootCodes": [],
+      "LogPath": "",
+      "LogName": "Java_8u461_64bit_Uninstall.log",
+      "AppV": false,
+      "AppX": false,
+      "Cleanup": {
+        "Shortcuts": [
+          {
+            "Name": "",
+            "Lnk": true,
+            "Url": false,
+            "StartMenu": false,
+            "Desktop": true,
+            "Documents": false,
+            "RemoveAll": true
+          }
+        ],
+        "RegistryKeys": [],
+        "FilePaths": [],
+        "EnvironmentVariables": [],
+        "PathEntries": [],
+        "Certificates": [],
+        "ScheduledTasks": [],
+        "Services": [],
+        "WMI": {
+          "Classes": [],
+          "Namespaces": []
+        }
+      }
+    },
+    {
+      "_Comment": "MSI uninstall for Java 8 Update 461 32-bit",
+      "Name": "Java 8 Update 461",
+      "Arguments": "/qn /norestart",
+      "ProcessNames": [],
+      "SuccessCodes": [],
+      "RebootCodes": [],
+      "LogPath": "",
+      "LogName": "Java_8u461_32bit_Uninstall.log",
+      "AppV": false,
+      "AppX": false,
+      "Cleanup": {
+        "Shortcuts": [
+          {
+            "Name": "",
+            "Lnk": true,
+            "Url": false,
+            "StartMenu": false,
+            "Desktop": true,
+            "Documents": false,
+            "RemoveAll": false
+          }
+        ],
+        "RegistryKeys": [],
+        "FilePaths": [],
+        "EnvironmentVariables": [],
+        "PathEntries": [],
+        "Certificates": [],
+        "ScheduledTasks": [],
+        "Services": [],
+        "WMI": {
+          "Classes": [],
+          "Namespaces": []
+        }
+      }
+    }
+  ]
+}

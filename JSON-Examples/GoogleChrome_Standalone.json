@@ -1,0 +1,47 @@
+{
+  "Apps": [
+    {
+      "_Comment": "Google Chrome (Standalone)",
+      "Name": "Google Chrome",
+      "Arguments": "--force-uninstall",
+      "ProcessNames": [
+        "chrome"
+      ],
+      "SuccessCodes": [
+        19
+      ],
+      "RebootCodes": [],
+      "LogPath": "",
+      "LogName": "Uninstall_GoogleChromeStandalone.log",
+      "AppV": false,
+      "AppX": false,
+      "Cleanup": {
+        "Shortcuts": [
+          {
+            "Name": "Google Chrome",
+            "Lnk": true,
+            "Url": false,
+            "StartMenu": false,
+            "Desktop": false,
+            "Documents": false,
+            "RemoveAll": true
+          }
+        ],
+        "RegistryKeys": [],
+        "FilePaths": [
+          "%LOCALAPPDATA%\\Google\\Chrome\\User Data",
+          "C:\\Temp\\NoAccessTest"
+        ],
+        "EnvironmentVariables": [],
+        "PathEntries": [],
+        "Certificates": [],
+        "ScheduledTasks": [],
+        "Services": [],
+        "WMI": {
+          "Classes": [],
+          "Namespaces": []
+        }
+      }
+    }
+  ]
+}
