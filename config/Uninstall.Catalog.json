@@ -11,7 +11,7 @@
     "AppV": false,
     "AppX": false,
     "Cleanup": {
-      "Shortcuts": [                 
+      "Shortcuts": [
         {
           "Name": "Zoom Workplace",
           "Lnk": true,
@@ -110,7 +110,7 @@
   "Chrome_Enterprise": {
     "Description": "Google Chrome enterprise MSI version",
     "FilePath": "%SystemRoot%\\System32\\msiexec.exe",
-    "Arguments": "/X{15971136-C56A-3015-AC9D-ED17B8F94952} /qn /norestart",
+    "Arguments": "/X{9E87E7EE-9308-35AF-9824-D9F2919C9AAF} /qn /norestart",
     "ProcessNames": [
       "chrome"
     ],
@@ -198,23 +198,12 @@
       "Certificates": [],
       "ScheduledTasks": [
         "Configuration Manager Client Retry Task",
-        "Configuration Manager Health Evaluation",
-        "Configuration Manager Idle Detection",
-        "Configuration Manager Client Upgrade",
-        "Configuration Manager Policy Agent Cleanup",
-        "Configuration Manager User Policy Cleanup",
-        "CCMEval",
-        "Configuration Manager Wake-Up Proxy",
-        "Configuration Manager Status Summarizer",
-        "SensorFramework-LogonTask-*"
+        "Configuration Manager Health Evaluation"
       ],
       "Services": [
         "CcmExec",
-        "ccmsetup",
         "CmRcService",
-        "smstsmgr",
-        "ccmnotificationagent",
-        "ccmperfmon"
+        "smstsmgr"
       ],
       "WMI": {
         "Classes": [],
