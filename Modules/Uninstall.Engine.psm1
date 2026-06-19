@@ -201,13 +201,6 @@ function Split-QuotedTokens {
     return [System.Text.RegularExpressions.Regex]::Matches($Text, '("([^"]|\\")*"|\S+)') | ForEach-Object { $_.Value }
 }
 
-function Test-UnsafeToken {
-    param([string]$Text)
-    if ([string]::IsNullOrWhiteSpace($Text)) { return $false }
-    # Block shell metacharacters and control chars
-    return ($Text -match '[\|\&\;\<\>\^%`"\''\r\n]')
-}
-
 function Format-ExeArgument {
     param([string]$JobArguments)
     $result = @()
@@ -216,15 +209,10 @@ function Format-ExeArgument {
     $tokens = Split-QuotedTokens -Text $JobArguments
     foreach ($tok in $tokens) {
         $t = $tok.Trim()
-        if (Test-UnsafeToken $t) { throw "Unsafe token in EXE arguments: $t" }
-        # If token is quoted, strip outer quotes
         if ($t.StartsWith('"') -and $t.EndsWith('"')) {
             $t = $t.Substring(1, $t.Length - 2)
         }
-        # Basic length guard
         if ($t.Length -gt 512) { throw "Token too long in EXE arguments." }
-        # Allow typical switch/value shapes; final validation is character-level (no metacharacters).
-        # Accept empty after stripping: ignore.
         if ($t.Trim().Length -gt 0) { $result += $t }
     }
     return $result
@@ -269,18 +257,26 @@ function Test-ExecutableTarget {
         return [pscustomobject]@{ IsSafe=$false; Reason='BlockedShell'; Path=$full }
     }
 
-    $info = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($full)
-    if ($info.InternalName -and ($blocked -contains $info.InternalName.ToLowerInvariant())) {
-        return [pscustomobject]@{ IsSafe=$false; Reason='BlockedInternalName'; Path=$full }
-    }
+    $safeRoots = @(
+        $env:ProgramFiles,
+        ${env:ProgramFiles(x86)},
+        $env:SystemRoot,
+        $env:ProgramData
+    ) | Where-Object { $_ } |
+        ForEach-Object { [System.IO.Path]::GetFullPath($_).ToLowerInvariant() }
 
     $fullLower = $full.ToLowerInvariant()
-    if ($fullLower -like 'c:\program files*' -or
-        $fullLower -like 'c:\program files (x86)*' -or
-        $fullLower -like 'c:\windows*' -or
-        $fullLower -like 'c:\programdata*' -or
-        ($PermitUserAppData -and $fullLower -like 'c:\users\*\appdata\*')) {
+    if ($safeRoots | Where-Object { $fullLower.StartsWith($_ + '\') }) {
         return [pscustomobject]@{ IsSafe=$true; Reason='SafeRoot'; Path=$full }
+    }
+
+    if ($PermitUserAppData) {
+        $usersRoot = [System.IO.Path]::GetFullPath(
+            (Split-Path $env:USERPROFILE -Parent)
+        ).ToLowerInvariant()
+        if ($fullLower.StartsWith("$usersRoot\") -and $fullLower -like '*\appdata\*') {
+            return [pscustomobject]@{ IsSafe=$true; Reason='SafeRoot'; Path=$full }
+        }
     }
 
     return [pscustomobject]@{ IsSafe=$false; Reason='OutsideSafeRoots'; Path=$full }
@@ -311,7 +307,7 @@ function Format-MsiArgument {
         [string]$LogPath         # optional log path
     )
 
-    $allowedSwitches = @('/qn','/qb','/norestart','/forcerestart','/l','/l*v')
+    $allowedSwitches = @('/i','/x','/qn','/qb','/norestart','/forcerestart','/l*v')
     $result = @()
 
     if ($JobArguments) {
@@ -321,11 +317,6 @@ function Format-MsiArgument {
 
         foreach ($tok in $tokens) {
             $t = $tok.Trim()
-
-            # Block shell metacharacters
-            if (Test-UnsafeToken $t) {
-                throw "Unsafe token in MSI arguments: $t"
-            }
 
             # Whitelisted switches
             if ($allowedSwitches -contains $t.ToLowerInvariant()) {
@@ -341,6 +332,15 @@ function Format-MsiArgument {
                     $result += $t
                 }
             }
+            # MSI product code GUID: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+            # These follow /i or /x and are safe — only hex digits and hyphens inside braces.
+            elseif ($t -match '^\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$') {
+                $result += $t
+            }
+            # Fused /i{GUID} or /x{GUID} — msiexec accepts this form without a space separator.
+            elseif ($t -match '^/[ixIX]\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$') {
+                $result += $t
+            }
             # MSI properties (KEY=VALUE)
             elseif ($t -match '^[A-Z0-9_]+=') {
                 $pair = $t.Split('=',2)
@@ -350,7 +350,7 @@ function Format-MsiArgument {
                 if ($key -notmatch '^[A-Z0-9_]+$') {
                     throw "Invalid MSI property name: $key"
                 }
-                if ($val -notmatch '^[A-Za-z0-9._\-\s\\:]+$') {
+                if ($val -notmatch '^[A-Za-z0-9._\-\\:]+$') {
                     throw "Invalid MSI property value for $key"
                 }
                 $result += "$key=$val"
@@ -378,8 +378,9 @@ function Invoke-UninstallCommand {
     )
 
     $resolvedFilePath = Expand-EnvValue $FilePath
-    if (-not (Test-ExecutableTarget -ExePath $resolvedFilePath)) {
-        throw "Unsafe catalog executable target: $resolvedFilePath"
+    $targetCheck = Test-ExecutableTarget -ExePath $resolvedFilePath
+    if (-not $targetCheck.IsSafe) {
+        throw "Unsafe catalog executable target: $resolvedFilePath ($($targetCheck.Reason))"
     }
 
     $type = Get-UninstallType -ExePath $resolvedFilePath
@@ -401,9 +402,6 @@ function Invoke-UninstallCommand {
     }
     elseif ($Arguments -is [System.Collections.IEnumerable] -and -not ($Arguments -is [string])) {
         foreach ($t in $Arguments) {
-            if (Test-UnsafeToken ([string]$t)) {
-                throw "Unsafe token in catalog arguments: $t"
-            }
             $argList += [string]$t
         }
     }
@@ -813,12 +811,10 @@ Export-ModuleMember -Function `
     Stop-TargetProcess, `
     Invoke-NormalizeRegKey, `
     Split-QuotedTokens, `
-    Test-UnsafeToken, `
     Format-MsiArgument, `
     Test-SafePath, `
     Test-ExecutableTarget, `
     Get-UninstallType, `
-    Format-MsiArgument, `
     Invoke-UninstallCommand, `
     Invoke-UninstallString, `
     Invoke-AppXRemoval, `
